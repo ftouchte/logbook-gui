@@ -2,11 +2,11 @@
 	background: rgb(214, 217, 219);
 	color: rgb(0, 0, 0);
 	font-weight: normal;
-	border-color: rgb(61, 61, 60);
+	border-color: rgb(177, 183, 191);
 	border-radius: 0px;
 	border-style: groove;
 	border-width: 5px;
-	padding: 10px;
+	padding: 5px 10px 5px 10px;
 	/*font-family: "Lucida Console", "Courier New", monospace;*/
 	font-weight: bold;
 }
@@ -19,12 +19,27 @@
 	border-radius: 0px;
 	border-style: solid;
 	border-width: 2px;
-	padding: 10px 20px 10px 20px; /* top right bottom left*/
+	padding: 5px 20px 5px 20px; /* top right bottom left*/
 	/*font-family: "Lucida Console", "Courier New", monospace;*/
 	font-weight: bold;
 }
 
 .button-layout:hover {
 	background: rgb(88, 145, 244);
+}
+
+.background {
+	background: rgb(214, 217, 219);
+}
+
+.entry {
+	/*border-radius: 0px;*/
+	font-weight: normal;
+	font-size: 16px;
+	font-family: "Sans Serif";
+}
+
+#notebook-screenshots header {
+	background-color: rgb(172, 212, 245);
 }
 

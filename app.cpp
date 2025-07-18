@@ -25,11 +25,13 @@ Window::Window() :
 	VBox_body(Gtk::Orientation::VERTICAL, 2),
 	HBox_footer(Gtk::Orientation::HORIZONTAL,10),
 	HPaned1(Gtk::Orientation::HORIZONTAL),
-	HPaned2(Gtk::Orientation::HORIZONTAL)
+	HPaned2(Gtk::Orientation::HORIZONTAL),
+	VBox_screenshots(Gtk::Orientation::VERTICAL,10),
+	HBox_screenshots(Gtk::Orientation::HORIZONTAL,10)
 	//Separator_sidebar(Gtk::Orientation::HORIZONTAL)
 {
 	set_title("logbook-gui");
-	set_default_size(800,500);
+	set_default_size(900,600);
 	set_child(VBox_main);
 	VBox_main.append(VBox_header);
 	VBox_main.append(VBox_body);
@@ -47,17 +49,34 @@ Window::Window() :
 	Frame_email.set_name("frame-email");
 	Frame_email.set_label("Email");
 	Frame_email.add_css_class("frame-layout");
-	HPaned1.set_position(400); // requested size for the first child
+	HPaned1.set_position(500); // requested size for the first child
 	HPaned1.set_end_child(Frame_marker);
 	Frame_marker.set_name("frame-marker");
 	Frame_marker.set_label("Marker");
 	Frame_marker.add_css_class("frame-layout");
 	VBox_body.append(HPaned2);
+		// Frame screenshots
 	HPaned2.set_start_child(Frame_screenshots);
+	HPaned2.set_position(450); 
 	Frame_screenshots.set_name("frame-screenshots");
 	Frame_screenshots.set_label("Screenshots");
 	Frame_screenshots.add_css_class("frame-layout");
 	Frame_screenshots.set_expand();
+	Frame_screenshots.set_child(VBox_screenshots);
+	VBox_screenshots.append(Notebook_screenshots);
+	Notebook_screenshots.set_expand();
+	Notebook_screenshots.set_name("notebook-screenshots");
+	Notebook_screenshots.append_page(*Gtk::make_managed<Gtk::Label>("img", Gtk::Align::CENTER), "#1");
+	VBox_screenshots.append(HBox_screenshots);
+	HBox_screenshots.append(Button_take_screenshot);
+	Button_take_screenshot.set_child(*Gtk::make_managed<Gtk::Label>("Take screenshot", Gtk::Align::CENTER));
+	Button_take_screenshot.add_css_class("button-layout");
+	HBox_screenshots.append(Button_plus);
+	Button_plus.set_child(*Gtk::make_managed<Gtk::Label>("+", Gtk::Align::CENTER));
+	Button_plus.add_css_class("button-layout");
+	HBox_screenshots.append(Button_minus);
+	Button_minus.set_child(*Gtk::make_managed<Gtk::Label>("-", Gtk::Align::CENTER));
+	Button_minus.add_css_class("button-layout");
 	HPaned2.set_end_child(Frame_comments);
 	Frame_comments.set_name("frame-comments");
 	Frame_comments.set_label("Comments");
@@ -65,8 +84,9 @@ Window::Window() :
 	Frame_comments.set_expand();
 	// Footer
 	HBox_footer.append(Button_submit);
+	HBox_footer.add_css_class("background");
 	Button_submit.add_css_class("button-layout");
-	Button_submit.set_margin_start(2);
+	Button_submit.set_margin_start(18);
 	Button_submit.set_margin_top(10);
 	Button_submit.set_margin_bottom(5);
 	Button_submit.set_child(*Gtk::make_managed<Gtk::Label>("Submit", Gtk::Align::CENTER));
@@ -75,6 +95,17 @@ Window::Window() :
 	Button_reset.set_margin_top(10);
 	Button_reset.set_margin_bottom(5);
 	Button_reset.add_css_class("button-layout");
+	// TextBuffer and Entry
+	TextBuffer_comments = Gtk::TextBuffer::create();
+	Frame_comments.set_child(TextView_comments);
+	TextView_comments.set_buffer(TextBuffer_comments);
+	Frame_title.set_child(Entry_title);
+	Frame_email.set_child(Entry_email);
+	Frame_marker.set_child(Entry_marker);
+	Entry_title.add_css_class("entry");
+	Entry_email.add_css_class("entry");
+	Entry_marker.add_css_class("entry");
+	TextView_comments.add_css_class("entry");
 	
 
 	//Button_select_file.set_margin_top(20);
@@ -130,7 +161,7 @@ void Window::on_parsing_error(const Glib::RefPtr<const Gtk::CssSection>& section
 int main (int argc, char * argv[]) {
 	printf("Start logbook-gui...\n");
 
-	auto app = Gtk::Application::create("org.gtkmm.example");
+	auto app = Gtk::Application::create("org.gtkmm.example.logbook");
 
 	return app->make_window_and_run<Window>(argc, argv);
 }

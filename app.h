@@ -24,12 +24,19 @@ protected :
 	Gtk::ScrolledWindow ScrolledWindow_comments;
 	//Gtk::Label Label_settings;
 	//Gtk::Separator Separator_sidebar;
-
+	
+	Gtk::Box VBox_screenshots, HBox_screenshots;
+	Gtk::Notebook Notebook_screenshots;
 	Gtk::Button Button_take_screenshot;
 	Gtk::Button Button_plus;
 	Gtk::Button Button_minus;
 	Gtk::Button Button_submit;
 	Gtk::Button Button_reset;
+
+	Gtk::TextView TextView_comments;
+	Glib::RefPtr<Gtk::TextBuffer> TextBuffer_comments;
+	Gtk::Entry Entry_title, Entry_email, Entry_marker;
+
 	
 	// for CSS file	
 	Glib::RefPtr<Gtk::CssProvider> m_refCssProvider; // copied from gtkmm documention
