@@ -134,6 +134,10 @@ Window::Window() :
 			sprintf(buffer, "screenshot_%d", (int) now);
 			std::string command = "./screenshot.sh " + std::string(buffer);
 			std::system(command.c_str());
+			// il ne reste plus récupérer le ficher et à l'afficher dans le Notebook. 
+			// idée, récupérer le numéro de page actif, insérer une Gtk::Image, etc...
+			// jouer avec les boutons + et -
+			// Gtk::Notebook
 		}
         });
 	focus_controller->signal_enter().connect([this]() {
