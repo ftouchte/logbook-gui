@@ -16,6 +16,8 @@
 #include <cstdio>
 #include <cstdlib>
 #include <iostream>
+#include <ctime>
+#include <regex>
 
 /** Constructor */
 Window::Window() :
@@ -95,10 +97,13 @@ Window::Window() :
 	Button_reset.set_margin_top(10);
 	Button_reset.set_margin_bottom(5);
 	Button_reset.add_css_class("button-layout");
+	HBox_footer.append(Label_log);
+	Label_log.set_margin_start(20);
 	// TextBuffer and Entry
 	TextBuffer_comments = Gtk::TextBuffer::create();
 	Frame_comments.set_child(TextView_comments);
 	TextView_comments.set_buffer(TextBuffer_comments);
+	TextView_comments.set_wrap_mode(Gtk::WrapMode::WORD);
 	Frame_title.set_child(Entry_title);
 	Frame_email.set_child(Entry_email);
 	Frame_marker.set_child(Entry_marker);
@@ -106,11 +111,34 @@ Window::Window() :
 	Entry_email.add_css_class("entry");
 	Entry_marker.add_css_class("entry");
 	TextView_comments.add_css_class("entry");
-	
+	Entry_title.set_text("Enter a title for log entry...");
 
-	//Button_select_file.set_margin_top(20);
-	//Button_select_file.set_child(*Gtk::make_managed<Gtk::Label>("Select file", Gtk::Align::CENTER));
-	//Button_select_file.add_css_class("button-layout");
+	// Define signals
+	Button_take_screenshot.signal_clicked().connect( sigc::mem_fun(*this, &Window::on_button_take_screenshot));
+	Button_plus.signal_clicked().connect( sigc::mem_fun(*this, &Window::on_button_plus));
+	Button_minus.signal_clicked().connect( sigc::mem_fun(*this, &Window::on_button_minus));
+	Button_submit.signal_clicked().connect( sigc::mem_fun(*this, &Window::on_button_submit));
+	Button_reset.signal_clicked().connect( sigc::mem_fun(*this, &Window::on_button_reset));
+
+	// Focus controller
+	// the signal is emitted, when we select another window application for example
+	auto focus_controller = Gtk::EventControllerFocus::create();
+	this->add_controller(focus_controller);
+	focus_controller->signal_leave().connect([this]() {
+		printf("logbook-gui lost the focus.\n");
+		if (flag_screenshot) {
+			printf("screenshot ongoing\n");
+			flag_screenshot = false;
+			std::time_t now = std::time(nullptr);
+			char buffer[50];
+			sprintf(buffer, "screenshot_%d", (int) now);
+			std::string command = "./screenshot.sh " + std::string(buffer);
+			std::system(command.c_str());
+		}
+        });
+	focus_controller->signal_enter().connect([this]() {
+		printf("logbook-gui has the focus.\n");
+        });
 
 	// Load extra CSS file (code copied from https://gnome.pages.gitlab.gnome.org/gtkmm-documentation/sec-custom-css-names.html)
 	m_refCssProvider = Gtk::CssProvider::create();
@@ -127,9 +155,6 @@ Window::Window() :
   	);
 	m_refCssProvider->load_from_path("custom_gtkmm.css");
 	// end load extra CSS file
-
-
-
 }
 
 
@@ -155,6 +180,79 @@ void Window::on_parsing_error(const Glib::RefPtr<const Gtk::CssSection>& section
 	std::cerr << "  start_position = " << start_location.get_line_chars()
 	      << ", end_position = " << end_location.get_line_chars() << std::endl;
 	}
+}
+
+void Window::on_button_take_screenshot() {
+	printf("Action: take screenshot...\n");
+	flag_screenshot = true;
+	// css style
+	auto context = Label_log.get_style_context();
+	context->remove_class("label-log1");
+	context->remove_class("label-log2");
+	context->add_class("label-log1");
+	// end css style
+	Label_log.set_text("New screenshot...");
+}
+
+void Window::on_button_plus() {
+	printf("Action: take screenshot / plus...\n");
+	// css style
+	auto context = Label_log.get_style_context();
+	context->remove_class("label-log1");
+	context->remove_class("label-log2");
+	context->add_class("label-log1");
+	// end css style
+	Label_log.set_text("Add a new screenshot tab...");
+}
+
+void Window::on_button_minus() {
+	printf("Action: take screenshot / minus...\n");
+	// css style
+	auto context = Label_log.get_style_context();
+	context->remove_class("label-log1");
+	context->remove_class("label-log2");
+	context->add_class("label-log1");
+	// end css style
+	Label_log.set_text("Remove a screenshot tab...");
+}
+
+void Window::on_button_submit() {
+	printf("Action: submit...\n");
+	std::time_t now = std::time(nullptr);
+	// css style
+	auto context = Label_log.get_style_context();
+	context->remove_class("label-log1");
+	context->remove_class("label-log2");
+	context->add_class("label-log2");
+	// end css style
+	//...    
+	std::string title = Entry_title.get_text();
+	std::regex empty_string(R"(^\s*$)"); // \s* zéro ou plusieurs caractères blancs ( , \t, \n, etc.)
+	if (std::regex_match(title, empty_string) || title == std::string("Enter a title for log entry...")) {
+		printf("*Please provide a valid title\n");
+		Label_log.set_text("Invalid title...");
+		return;
+	}
+	std::string marker = Entry_marker.get_text();
+	std::string email = Entry_email.get_text();
+	std::string comments = TextBuffer_comments->get_text();
+	printf("===================================\n");
+	printf("Entry submited on : %s\n", std::ctime(&now));
+	printf("Title: %s\n", title.c_str());
+	printf("   marker  : %s\n", marker.c_str());
+	printf("   send to : %s\n\n", email.c_str());
+	printf("%s\n", comments.c_str());
+	printf("===================================\n");
+	Label_log.set_text("Log entry submitted...");
+}
+
+void Window::on_button_reset() {
+	printf("Action: reset...\n");
+	Entry_title.set_text("Enter a title for log entry...");
+	Entry_email.set_text("");
+	Entry_marker.set_text("");
+	Label_log.set_text("");
+	TextBuffer_comments->set_text("");
 }
 
 /** Main function */

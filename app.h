@@ -22,7 +22,6 @@ protected :
 	Gtk::Paned HPaned1, HPaned2;
 	Gtk::Frame Frame_title, Frame_email, Frame_marker, Frame_screenshots, Frame_comments;
 	Gtk::ScrolledWindow ScrolledWindow_comments;
-	//Gtk::Label Label_settings;
 	//Gtk::Separator Separator_sidebar;
 	
 	Gtk::Box VBox_screenshots, HBox_screenshots;
@@ -36,6 +35,8 @@ protected :
 	Gtk::TextView TextView_comments;
 	Glib::RefPtr<Gtk::TextBuffer> TextBuffer_comments;
 	Gtk::Entry Entry_title, Entry_email, Entry_marker;
+	Gtk::Label Label_log;
+	bool flag_screenshot = false;
 
 	
 	// for CSS file	
@@ -46,7 +47,11 @@ public :
 	~Window();
 
 	// Signals
-	//void on_button_prev_clicked();
+	void on_button_take_screenshot();
+	void on_button_plus();
+	void on_button_minus();
+	void on_button_submit();
+	void on_button_reset();
 	//void on_mouse_clicked(int n_press, double x, double y);
 };
 
