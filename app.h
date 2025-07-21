@@ -37,6 +37,7 @@ protected :
 	Gtk::Entry Entry_title, Entry_email, Entry_marker;
 	Gtk::Label Label_log;
 	bool flag_screenshot = false;
+	std::vector<std::string> attachments; // list of screenshots
 
 	
 	// for CSS file	
@@ -52,6 +53,8 @@ public :
 	void on_button_minus();
 	void on_button_submit();
 	void on_button_reset();
+	// method
+	void update_screenshots();
 	//void on_mouse_clicked(int n_press, double x, double y);
 };
 

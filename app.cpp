@@ -68,7 +68,8 @@ Window::Window() :
 	VBox_screenshots.append(Notebook_screenshots);
 	Notebook_screenshots.set_expand();
 	Notebook_screenshots.set_name("notebook-screenshots");
-	Notebook_screenshots.append_page(*Gtk::make_managed<Gtk::Label>("img", Gtk::Align::CENTER), "#1");
+	attachments.push_back("");
+	Notebook_screenshots.append_page(*Gtk::make_managed<Gtk::Picture>(), "empty");
 	VBox_screenshots.append(HBox_screenshots);
 	HBox_screenshots.append(Button_take_screenshot);
 	Button_take_screenshot.set_child(*Gtk::make_managed<Gtk::Label>("Take screenshot", Gtk::Align::CENTER));
@@ -127,17 +128,24 @@ Window::Window() :
 	focus_controller->signal_leave().connect([this]() {
 		printf("logbook-gui lost the focus.\n");
 		if (flag_screenshot) {
-			printf("screenshot ongoing\n");
+			if (Notebook_screenshots.get_n_pages() > 0) {
+				printf("screenshot ongoing\n");
+				std::time_t now = std::time(nullptr);
+				char filename[50];
+				sprintf(filename, "./screenshots/screenshot_%d", (int) now);
+				std::string command = "./screenshot.sh " + std::string(filename);
+				std::system(command.c_str());
+				// il ne reste plus récupérer le ficher et à l'afficher dans le Notebook. 
+				// idée, récupérer le numéro de page actif, insérer une Gtk::Image, etc...
+				// jouer avec les boutons + et -
+				// Gtk::Notebook
+				int page_number = Notebook_screenshots.get_current_page();
+				printf("n pages : %d\n", Notebook_screenshots.get_n_pages());
+				attachments.at(page_number) = filename;
+				update_screenshots();
+				Notebook_screenshots.set_current_page(page_number);
+			}
 			flag_screenshot = false;
-			std::time_t now = std::time(nullptr);
-			char buffer[50];
-			sprintf(buffer, "screenshot_%d", (int) now);
-			std::string command = "./screenshot.sh " + std::string(buffer);
-			std::system(command.c_str());
-			// il ne reste plus récupérer le ficher et à l'afficher dans le Notebook. 
-			// idée, récupérer le numéro de page actif, insérer une Gtk::Image, etc...
-			// jouer avec les boutons + et -
-			// Gtk::Notebook
 		}
         });
 	focus_controller->signal_enter().connect([this]() {
@@ -187,6 +195,11 @@ void Window::on_parsing_error(const Glib::RefPtr<const Gtk::CssSection>& section
 }
 
 void Window::on_button_take_screenshot() {
+	if (Notebook_screenshots.get_n_pages() <= 0) {
+		printf("create a new page with +...\n");
+		Label_log.set_text("Please create a new page with +");
+		return;
+	}
 	printf("Action: take screenshot...\n");
 	flag_screenshot = true;
 	// css style
@@ -200,6 +213,9 @@ void Window::on_button_take_screenshot() {
 
 void Window::on_button_plus() {
 	printf("Action: take screenshot / plus...\n");
+	attachments.push_back("");
+	Notebook_screenshots.append_page(*Gtk::make_managed<Gtk::Picture>(), "empty");
+	Notebook_screenshots.set_current_page(Notebook_screenshots.get_n_pages()-1);
 	// css style
 	auto context = Label_log.get_style_context();
 	context->remove_class("label-log1");
@@ -211,6 +227,11 @@ void Window::on_button_plus() {
 
 void Window::on_button_minus() {
 	printf("Action: take screenshot / minus...\n");
+	int page_number = Notebook_screenshots.get_current_page();
+	if ((page_number >= 0) && (page_number < (int) attachments.size())) {
+		attachments.erase(attachments.begin() + page_number);
+	}
+	update_screenshots();
 	// css style
 	auto context = Label_log.get_style_context();
 	context->remove_class("label-log1");
@@ -246,6 +267,14 @@ void Window::on_button_submit() {
 	printf("   marker  : %s\n", marker.c_str());
 	printf("   send to : %s\n\n", email.c_str());
 	printf("%s\n", comments.c_str());
+	printf("Attachments : \n");
+	int num = 0;
+	for (std::string filename : attachments) {
+		if (filename != "") {
+			num++;
+			printf("   %d. %s\n", num, filename.c_str());
+		}
+	}
 	printf("===================================\n");
 	Label_log.set_text("Log entry submitted...");
 }
@@ -257,6 +286,28 @@ void Window::on_button_reset() {
 	Entry_marker.set_text("");
 	Label_log.set_text("");
 	TextBuffer_comments->set_text("");
+	attachments.clear();
+	update_screenshots();
+}
+
+void Window::update_screenshots() {
+	// empty the notebook
+	for (int i = Notebook_screenshots.get_n_pages()-1; i >= 0; i--){
+		Notebook_screenshots.remove_page(i);
+	}
+	// fill it back
+	int page_number = 0;
+	for (std::string filename : attachments) {
+		page_number++;
+		char page_name[50];
+		if (filename != "") {
+			sprintf(page_name, "#%d", page_number);
+		}
+		else {
+			sprintf(page_name, "empty");
+		}
+		Notebook_screenshots.append_page(*Gtk::make_managed<Gtk::Picture>(filename.c_str()), page_name);
+	}
 }
 
 /** Main function */
