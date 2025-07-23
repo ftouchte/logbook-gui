@@ -38,7 +38,7 @@ protected :
 	Gtk::Label Label_log;
 	bool flag_screenshot = false;
 	std::vector<std::string> attachments; // list of screenshots
-
+	std::string output_dir = ".";
 	
 	// for CSS file	
 	Glib::RefPtr<Gtk::CssProvider> m_refCssProvider; // copied from gtkmm documention
@@ -55,6 +55,7 @@ public :
 	void on_button_reset();
 	// method
 	void update_screenshots();
+	std::string time_t2string(std::time_t t, std::string format = "%Y/%m/%d %H:%M:%S");
 	//void on_mouse_clicked(int n_press, double x, double y);
 };
 

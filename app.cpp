@@ -18,6 +18,9 @@
 #include <iostream>
 #include <ctime>
 #include <regex>
+#include <fstream>
+#include <filesystem>
+#include <iomanip>
 
 /** Constructor */
 Window::Window() :
@@ -131,9 +134,11 @@ Window::Window() :
 			if (Notebook_screenshots.get_n_pages() > 0) {
 				printf("screenshot ongoing\n");
 				std::time_t now = std::time(nullptr);
-				char filename[50];
-				sprintf(filename, "./screenshots/screenshot_%d", (int) now);
-				std::string command = "./screenshot.sh " + std::string(filename);
+				// files dir
+				std::string files_dir = output_dir + "/files/" + time_t2string(now, "%Y/%m/%d");  
+				std::string filename  = files_dir + "/" + "screenshot_" + time_t2string(now, "%Y-%m-%d_%H-%M-%S") + ".png";
+				std::filesystem::create_directories(files_dir.c_str());
+				std::string command = "./screenshot.sh " + filename;
 				std::system(command.c_str());
 				// il ne reste plus récupérer le ficher et à l'afficher dans le Notebook. 
 				// idée, récupérer le numéro de page actif, insérer une Gtk::Image, etc...
@@ -250,7 +255,7 @@ void Window::on_button_submit() {
 	context->remove_class("label-log2");
 	context->add_class("label-log2");
 	// end css style
-	//...    
+	// title    
 	std::string title = Entry_title.get_text();
 	std::regex empty_string(R"(^\s*$)"); // \s* zéro ou plusieurs caractères blancs ( , \t, \n, etc.)
 	if (std::regex_match(title, empty_string) || title == std::string("Enter a title for log entry...")) {
@@ -258,6 +263,7 @@ void Window::on_button_submit() {
 		Label_log.set_text("Invalid title...");
 		return;
 	}
+	// other entries
 	std::string marker = Entry_marker.get_text();
 	std::string email = Entry_email.get_text();
 	std::string comments = TextBuffer_comments->get_text();
@@ -277,6 +283,29 @@ void Window::on_button_submit() {
 	}
 	printf("===================================\n");
 	Label_log.set_text("Log entry submitted...");
+	// output
+	
+	std::string entry_dir  = output_dir + "/entry/" + time_t2string(now, "%Y/%m/%d");  
+	std::string entry_file = entry_dir + "/" + time_t2string(now, "%Y-%m-%d_%H-%M-%S") + ".md";
+	std::filesystem::create_directories(entry_dir.c_str());
+	std::ofstream file(entry_file.c_str(), std::ios::out);
+	if (!file.is_open()) {
+        	return; 
+    	}
+	file << "## "  << title << std::endl << std::endl;
+	file << "Submitted on " << time_t2string(now, "%a, %d %b %Y - %H:%M:%S %Z") << std::endl << std::endl;
+	file << "   _marker_ :" << marker << std::endl << std::endl;
+	file << "   _email_ :" << email << std::endl << std::endl;
+	file << comments << std::endl << std::endl;
+	file << "**Attachments:**" << std::endl << std::endl;
+	int natt = 0;
+	for (std::string att : attachments) {
+		if (att != "") {
+			natt++;
+			file << natt << ". ![" << att << "](../../../../" << att << ")  " << std::endl;
+		}
+	}
+	file.close();
 }
 
 void Window::on_button_reset() {
@@ -308,6 +337,13 @@ void Window::update_screenshots() {
 		}
 		Notebook_screenshots.append_page(*Gtk::make_managed<Gtk::Picture>(filename.c_str()), page_name);
 	}
+}
+
+std::string Window::time_t2string(std::time_t t, std::string format) {
+	std::tm tm = *std::localtime(&t);
+	std::ostringstream oss;
+	oss << std::put_time(&tm, format.c_str());
+	return oss.str();
 }
 
 /** Main function */

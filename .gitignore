@@ -1,4 +1,8 @@
 *.exe
 *.o
 *.swp
-screenshots
+screenshots/
+entry/
+files/
+table.md
+
