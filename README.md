@@ -4,6 +4,7 @@ Dependencies:
 
 1. libgtkmm-4.0-dev
 1. gnome-screenshot
+1. libsqlite3-dev sqlite3
 
 Use:
 

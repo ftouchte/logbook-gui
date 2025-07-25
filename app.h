@@ -56,6 +56,7 @@ public :
 	// method
 	void update_screenshots();
 	std::string time_t2string(std::time_t t, std::string format = "%Y/%m/%d %H:%M:%S");
+	int get_last_lognumber();
 	//void on_mouse_clicked(int n_press, double x, double y);
 };
 

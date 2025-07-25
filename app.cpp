@@ -21,6 +21,7 @@
 #include <fstream>
 #include <filesystem>
 #include <iomanip>
+#include <sqlite3.h>
 
 /** Constructor */
 Window::Window() :
@@ -103,6 +104,7 @@ Window::Window() :
 	Button_reset.add_css_class("button-layout");
 	HBox_footer.append(Label_log);
 	Label_log.set_margin_start(20);
+
 	// TextBuffer and Entry
 	TextBuffer_comments = Gtk::TextBuffer::create();
 	Frame_comments.set_child(TextView_comments);
@@ -115,7 +117,10 @@ Window::Window() :
 	Entry_email.add_css_class("entry");
 	Entry_marker.add_css_class("entry");
 	TextView_comments.add_css_class("entry");
-	Entry_title.set_text("Enter a title for log entry...");
+	char buffer[100];
+	int new_entry_number = get_last_lognumber() + 1;
+	sprintf(buffer, "Entry n° %d: Enter a title for your log entry...", new_entry_number);
+	Entry_title.set_text(buffer);
 
 	// Define signals
 	Button_take_screenshot.signal_clicked().connect( sigc::mem_fun(*this, &Window::on_button_take_screenshot));
@@ -283,8 +288,7 @@ void Window::on_button_submit() {
 	}
 	printf("===================================\n");
 	Label_log.set_text("Log entry submitted...");
-	// output
-	
+	// file output
 	std::string entry_dir  = output_dir + "/entry/" + time_t2string(now, "%Y/%m/%d");  
 	std::string entry_file = entry_dir + "/" + time_t2string(now, "%Y-%m-%d_%H-%M-%S") + ".md";
 	std::filesystem::create_directories(entry_dir.c_str());
@@ -306,6 +310,26 @@ void Window::on_button_submit() {
 		}
 	}
 	file.close();
+	
+	// save entry in the database (chatGPT of course!)
+		// open a sqlite db
+	sqlite3* db;
+	char* errMsg = nullptr;
+	int rc = sqlite3_open("./data.db", &db);
+	if (rc) {
+		std::cerr << "Cannot open the database " << sqlite3_errmsg(db) << "\n";
+		return;
+	}
+		// prepare the command
+	std::string insertSQL = "INSERT INTO entries (timestamp, author, title) VALUES ('" + time_t2string(now, "%Y-%m-%d %H:%M:%S") + "', '" + "touchte" + "', '" + title + "');";
+		// execute the command
+	if (sqlite3_exec(db, insertSQL.c_str(), nullptr, nullptr, &errMsg) != SQLITE_OK) {
+		std::cerr << "Erreur insertion: " << errMsg << std::endl;
+	sqlite3_free(errMsg);
+	} else {
+		std::cout << "New entry added in the database" << std::endl;
+	}
+	sqlite3_close(db);
 }
 
 void Window::on_button_reset() {
@@ -344,6 +368,40 @@ std::string Window::time_t2string(std::time_t t, std::string format) {
 	std::ostringstream oss;
 	oss << std::put_time(&tm, format.c_str());
 	return oss.str();
+}
+
+int Window::get_last_lognumber() {
+	int last_lognumber = -1;
+	// Access last lognumber (chatGPT)
+		// open db
+	sqlite3* db;
+	sqlite3_stmt* stmt; // pour préparer et exécuter la requête
+	if (sqlite3_open("data.db", &db) != SQLITE_OK) {
+        	std::cerr << "Erreur ouverture DB: " << sqlite3_errmsg(db) << std::endl;
+        	return -1;
+	}
+		// préparation de la requête
+	const char* sql = "SELECT MAX(lognumber) FROM entries;";
+	if (sqlite3_prepare_v2(db, sql, -1, &stmt, nullptr) != SQLITE_OK) {
+        	std::cerr << "Erreur préparation requête: " << sqlite3_errmsg(db) << std::endl;
+        	sqlite3_close(db);
+        	return -1;
+	}
+		// exécution de la requête
+	int rc = sqlite3_step(stmt);
+		// Si une ligne de résultat est disponible, on rentre dans ce bloc.
+		// On lit la première (et unique) colonne de cette ligne (index 0).// Si la colonne vaut NULL (exemple : table vide), on met max_id à 0. // Sinon, on récupère la valeur entière de cette colonne dans max_id.
+	if (rc == SQLITE_ROW) {
+		last_lognumber = sqlite3_column_type(stmt, 0) == SQLITE_NULL ? 0 : sqlite3_column_int(stmt, 0);
+		std::cout << "ID max dans la table: " << last_lognumber << std::endl;
+	} else {
+		std::cerr << "Erreur lecture résultat" << std::endl;
+	}
+		// Libère la mémoire allouée pour la requête préparée stmt.
+		// close db
+	sqlite3_finalize(stmt);
+	sqlite3_close(db);
+	return last_lognumber;
 }
 
 /** Main function */
