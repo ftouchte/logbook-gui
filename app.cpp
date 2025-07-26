@@ -141,10 +141,10 @@ Window::Window() :
 				std::time_t now = std::time(nullptr);
 				// files dir
 				int entry_number = get_last_lognumber() + 1;
-				std::string files_dir = output_dir + "/files/" + time_t2string(now, "%Y/%m/%d") + "/" + std::to_string(entry_number);  
+				std::string files_dir = "files/" + time_t2string(now, "%Y/%m/%d") + "/" + std::to_string(entry_number);  
 				std::string filename  = files_dir + "/" + "screenshot_" + time_t2string(now, "%Y-%m-%d_%H-%M-%S") + ".png";
 				std::filesystem::create_directories(files_dir.c_str());
-				std::string command = "./screenshot.sh " + filename;
+				std::string command = output_dir + "/screenshot.sh " + output_dir + "/" + filename;
 				if (std::system(command.c_str()) == 0) {
 					// il ne reste plus récupérer le ficher et à l'afficher dans le Notebook. 
 					// idée, récupérer le numéro de page actif, insérer une Gtk::Image, etc...
@@ -177,7 +177,7 @@ Window::Window() :
     		[](const auto& section, const auto& error)
     		{ on_parsing_error(section, error); }
   	);
-	m_refCssProvider->load_from_path("custom_gtkmm.css");
+	m_refCssProvider->load_from_path(std::string(output_dir + "/custom_gtkmm.css").c_str());
 	// end load extra CSS file
 }
 
@@ -388,7 +388,7 @@ void Window::update_screenshots() {
 		else {
 			sprintf(page_name, "empty");
 		}
-		Notebook_screenshots.append_page(*Gtk::make_managed<Gtk::Picture>(filename.c_str()), page_name);
+		Notebook_screenshots.append_page(*Gtk::make_managed<Gtk::Picture>((output_dir + "/" + filename).c_str()), page_name);
 	}
 }
 

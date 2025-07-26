@@ -38,7 +38,7 @@ protected :
 	Gtk::Label Label_log;
 	bool flag_screenshot = false;
 	std::vector<std::string> attachments; // list of screenshots
-	std::string output_dir = ".";
+	std::string output_dir = "/home/touchte-codjo/.gui-logbook";
 	
 	// for CSS file	
 	Glib::RefPtr<Gtk::CssProvider> m_refCssProvider; // copied from gtkmm documention
