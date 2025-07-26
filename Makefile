@@ -47,7 +47,7 @@ LDFLAGS   :=
 all: app 
 
 app: app.o 
-	$(CXX) -o app.exe $^ $(ROOTLIBS) $(GTKLIBS) -lsqlite3
+	$(CXX) -o gui-logbook.exe $^ $(ROOTLIBS) $(GTKLIBS) -lsqlite3
 
 
 
