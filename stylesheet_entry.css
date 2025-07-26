@@ -16,3 +16,25 @@ body {
 	color:blue; 
 	font-weight: bold;
 }
+
+#header {
+        background-color: #595959;
+        color: white;
+}
+
+#header a {
+  text-decoration: none;  /* enlève le soulignement */
+  color: white;           /* couleur noire */
+}
+
+#header a:visited {
+  color: white;           /* couleur identique même après visite */
+  text-decoration: none;  /* toujours pas de soulignement */
+}
+
+#header a:hover,
+#header a:active {
+  text-decoration: underline; /* si tu veux un soulignement au survol, sinon laisse none */
+  color: white;                 /* ou une autre couleur au survol */
+}
+

@@ -307,6 +307,9 @@ void Window::on_button_submit() {
 	file << "  <link rel='stylesheet' href='../../stylesheet_entry.css'>" << std::endl;
 	file << "</head>" << std::endl;
 	file << "<body>" << std::endl;
+	file << "<div id=header>" << std::endl;
+        file << "   <h1> <a href='https://ftouchte.github.io/logbook-gui/'> Felix Touchte Codjo - Electronic Logbook </a> </h1>" << std::endl;
+        file << "</div>" << std::endl;
 	file << "<div id=pagination>" << std::endl;
 	file << "<button onclick='Prev()'> Prev </button> <button onclick='Next()'> Next </button>" << std::endl;
 	file << "</div>" << std::endl;
@@ -493,7 +496,7 @@ void Window::deploy_logbook() {
 		// div : header
 	file << "<body>" << std::endl;
 	file << "<div id=header>" << std::endl;
-	file << "   <h1> Felix Touchte Codjo Electronic - Logbook</h1>" << std::endl;
+	file << "   <h1> <a href='https://ftouchte.github.io/logbook-gui/'> Felix Touchte Codjo - Electronic Logbook </a> </h1>" << std::endl;
 	file << "</div>" << std::endl;
 	// div : main
 	file << "<div id=main>" << std::endl;
