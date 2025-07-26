@@ -322,9 +322,15 @@ void Window::on_button_submit() {
 	file << comments << std::endl;
 	file << "</p>" << std::endl;
 	file << "<p>" << std::endl;
-	file << "   <b> Attachements </b>" << std::endl;
-	file << "</p>" << std::endl;
 	int natt = 0;
+	for (std::string att : attachments) {
+		if (att != "") {
+			natt++;
+		}
+	}
+	file << "   <b> Attachments (" << natt << ") </b>" << std::endl;
+	file << "</p>" << std::endl;
+	natt = 0;
 	for (std::string att : attachments) {
 		if (att != "") {
 			natt++;
