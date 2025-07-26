@@ -302,25 +302,16 @@ void Window::on_button_submit() {
 	file << "<!DOCTYPE html>" << std::endl;
 	file << "<html>" << std::endl;
 	file << "<head>" << std::endl;
+	file << "  <meta charset='UTF-8'>" << std::endl;
 	file << "  <title>ftouchte | Log Entry</title>" << std::endl;
+	file << "  <link rel='stylesheet' href='../../stylesheet_entry.css'>" << std::endl;
 	file << "</head>" << std::endl;
-	file << "<meta charset='UTF-8'>" << std::endl;
-	file << "<style>" << std::endl;
-	file << "  img { max-width: 90%; height: auto; margin: auto}" << std::endl;
-	file << "  body {" << std::endl;
-	file << "     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen," << std::endl;
-        file << "       Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;" << std::endl;
-	file << "     margin: 30px;" << std::endl;
-	file << "  }" << std::endl;
-	file << "  #pagination {text-align: center;}" << std::endl;
-	file << "</style>" << std::endl;
-
 	file << "<body>" << std::endl;
 	file << "<div id=pagination>" << std::endl;
 	file << "<button onclick='Prev()'> Prev </button> <button onclick='Next()'> Next </button>" << std::endl;
 	file << "</div>" << std::endl;
 	file << "<h2> "  << title << "</h2>" << std::endl;
-	file << "<p> Lognumber <span id='lognumber' style='color:blue; font-weight: bold;'>"  << entry_number << "</span>. </p>";
+	file << "<p> Lognumber <span id='lognumber'>"  << entry_number << "</span>. </p>";
 	file << "<p> Submitted on " << time_t2string(now, "%a, %d %b %Y - %H:%M:%S %Z") << "</p>" << std::endl;
 	file << "<p> <i> Marker: </i>" << marker << "</p>" << std::endl;
 	file << "<p> <i> Send to: </i>" << email << "</p>" << std::endl;
@@ -339,50 +330,7 @@ void Window::on_button_submit() {
 		}
 	}
 	file << "</body>" << std::endl;
-	// **** Start script
-	file << "<script>" << std::endl;	
-	file << " function Next() {" << std::endl;
-		// generate the list of lognumber
-	file << "   const lognumbers = [";
-	for (int lognumber : get_lognumbers()) {
-		file << lognumber << ", ";
-	}
-	file << "0];" << std::endl;
-		// read the value of the current lognumber in the html page
-	file << "   const text_lognumber = document.getElementById('lognumber').textContent;" << std::endl;
-	file << "   const lognumber = Number(text_lognumber);" << std::endl;
-	file << "   let next_lognumber = lognumbers[0];" << std::endl;
-	file << "   for (let i = 0; i < lognumbers.length - 1; i++) {" << std::endl;
-	file << "       if (lognumbers[i] === lognumber) {" << std::endl;
-	file << "          next_lognumber = lognumbers[i+1];" << std::endl;
-	file << "          break;" << std::endl;
-	file << "       }" << std::endl;
-	file << "   }" << std::endl;
-	file << "   const page = '../' + next_lognumber + '/index.html';" << std::endl;
-	file << "   window.location.href = page;" << std::endl;
-	file << " }" << std::endl;
-	file << " function Prev() {" << std::endl;
-		// generate the list of lognumber
-	file << "   const lognumbers = [";
-	for (int lognumber : get_lognumbers()) {
-		file << lognumber << ", ";
-	}
-	file << "0];" << std::endl;
-		// read the value of the current lognumber in the html page
-	file << "   const text_lognumber = document.getElementById('lognumber').textContent;" << std::endl;
-	file << "   const lognumber = Number(text_lognumber);" << std::endl;
-	file << "   let prev_lognumber = lognumbers[0];" << std::endl;
-	file << "   for (let i = 1; i < lognumbers.length; i++) {" << std::endl;
-	file << "       if (lognumbers[i] === lognumber) {" << std::endl;
-	file << "          prev_lognumber = lognumbers[i-1];" << std::endl;
-	file << "          break;" << std::endl;
-	file << "       }" << std::endl;
-	file << "   }" << std::endl;
-	file << "   const page = '../' + prev_lognumber + '/index.html';" << std::endl;
-	file << "   window.location.href = page;" << std::endl;
-	file << " }" << std::endl;
-	file << "</script>" << std::endl;
-	// **** End script
+	file << "<script src='../../script_entry.js'> </script>" << std::endl;	
 	file << "</html>" << std::endl;
 	file.close();
 	
@@ -526,7 +474,7 @@ void Window::deploy_logbook() {
 		sqlite3_finalize(stmt);
 		sqlite3_close(db);
 	}
-	// create a file (not linked to the sqlite)
+	// create a file index.html (the homepage)
 	std::ofstream file("./index.html", std::ios::out);
 	if (!file.is_open()) {
 		printf("cannot open index.html\n");
@@ -535,24 +483,10 @@ void Window::deploy_logbook() {
 	file << "<!DOCTYPE html>" << std::endl;
 	file << "<html>" << std::endl;
 	file << "<head>" << std::endl;
-	file << "  <title>ftouchte | Log Entry</title>" << std::endl;
+	file << "  <meta charset='UTF-8'>" << std::endl;
+	file << "  <title>ftouchte | Logbook</title>" << std::endl;
+	file << "  <link rel='stylesheet' href='./stylesheet_homepage.css'>" << std::endl;
 	file << "</head>" << std::endl;
-	file << "<meta charset='UTF-8'>" << std::endl;
-	file << "<style>" << std::endl;
-	file << "  img { max-width: 90%; height: auto; margin: auto}" << std::endl;
-	file << "  body {" << std::endl;
-	file << "     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen," << std::endl;
-	file << "       Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;" << std::endl;
-	file << "     margin: 30px;" << std::endl;
-	file << "  }" << std::endl;
-	file << "  #header {" << std::endl;
-	file << "     background-color: #595959;" << std::endl;  
-	file << "     color: white;" << std::endl;  
-	file << "  }" << std::endl;
-	file << "  table {width: 100; table-layout: default;}" << std::endl;
-	file << "  th {text-align: left}" << std::endl;
-	file << "  th, td {text-align: left; padding-left: 16px; padding-right: 16px;}" << std::endl;
-	file << "</style>" << std::endl;
 		// div : header
 	file << "<body>" << std::endl;
 	file << "<div id=header>" << std::endl;
@@ -615,6 +549,50 @@ void Window::deploy_logbook() {
 	file << "</body>" << std::endl;
 	file << "</html>" << std::endl;
 	file.close();
+	// create the script file : script_entry.js
+	std::ofstream file2("./script_entry.js", std::ios::out);
+	if (!file2.is_open()) {
+		printf("cannot open script_entry.js\n");
+		return; 
+	}
+	file2 << " const lognumbers = [";
+	std::vector<int> vec_lognumbers = get_lognumbers();
+	for (int i = 0; i < (int) vec_lognumbers.size(); i++) {
+		file2 << vec_lognumbers[i];
+		if (i < (int) vec_lognumbers.size() - 1) {
+			file2 << ", ";
+		}
+	}
+	file2 << "];" << std::endl;
+	file2 << "  " << std::endl;
+	file2 << " function Next() { " << std::endl;
+	file2 << " 	const text_lognumber = document.getElementById('lognumber').textContent; " << std::endl;
+	file2 << " 	const lognumber = Number(text_lognumber); " << std::endl;
+	file2 << " 	let next_lognumber = lognumbers[0]; " << std::endl;
+	file2 << " 	for (let i = 0; i < lognumbers.length - 1; i++) { " << std::endl;
+	file2 << " 		if (lognumbers[i] === lognumber) { " << std::endl;
+	file2 << " 			next_lognumber = lognumbers[i+1]; " << std::endl;
+	file2 << " 			break; " << std::endl;
+	file2 << " 		} " << std::endl;
+	file2 << " 	} " << std::endl;
+	file2 << " 	const page = '../' + next_lognumber + '/index.html'; " << std::endl;
+	file2 << " 	window.location.href = page; " << std::endl;
+	file2 << " } " << std::endl;
+	file2 << "  " << std::endl;
+	file2 << " function Prev() { " << std::endl;
+	file2 << " 	const text_lognumber = document.getElementById('lognumber').textContent; " << std::endl;
+	file2 << " 	const lognumber = Number(text_lognumber); " << std::endl;
+	file2 << " 	let prev_lognumber = lognumbers[0]; " << std::endl;
+	file2 << " 	for (let i = 1; i < lognumbers.length; i++) { " << std::endl;
+	file2 << " 		if (lognumbers[i] === lognumber) { " << std::endl;
+	file2 << " 			prev_lognumber = lognumbers[i-1]; " << std::endl;
+	file2 << " 			break; " << std::endl;
+	file2 << " 		} " << std::endl;
+	file2 << " 	} " << std::endl;
+	file2 << " 	const page = '../' + prev_lognumber + '/index.html'; " << std::endl;
+	file2 << " 	window.location.href = page; " << std::endl;
+	file2 << " } " << std::endl;
+	file2.close();
 }
 
 std::vector<int> Window::get_lognumbers() {
@@ -623,7 +601,7 @@ std::vector<int> Window::get_lognumbers() {
 	sqlite3* db;
 	sqlite3_stmt* stmt;
 	const char* db_name = "./data.db";
-	const char* sql = "SELECT lognumber FROM entries ORDER BY lognumber DESC;"; // Exemple de table
+	const char* sql = "SELECT lognumber FROM entries ORDER BY lognumber ASC;"; // Exemple de table
 
 	// Ouvrir la base de données
 	if (sqlite3_open(db_name, &db) != SQLITE_OK) {
