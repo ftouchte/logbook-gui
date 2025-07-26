@@ -337,8 +337,9 @@ void Window::on_button_submit() {
 	// save entry in the database (chatGPT of course!)
 		// open a sqlite db
 	sqlite3* db;
+	std::string db_name = output_dir + "/data.db";
 	char* errMsg = nullptr;
-	int rc = sqlite3_open("./data.db", &db);
+	int rc = sqlite3_open(db_name.c_str(), &db);
 	if (rc) {
 		std::cerr << "Cannot open the database " << sqlite3_errmsg(db) << "\n";
 		return;
@@ -413,8 +414,9 @@ int Window::get_last_lognumber() {
 	// Access last lognumber (chatGPT)
 		// open db
 	sqlite3* db;
+	std::string db_name = output_dir + "/data.db";
 	sqlite3_stmt* stmt; // pour préparer et exécuter la requête
-	if (sqlite3_open("data.db", &db) != SQLITE_OK) {
+	if (sqlite3_open(db_name.c_str(), &db) != SQLITE_OK) {
         	std::cerr << "Erreur ouverture DB: " << sqlite3_errmsg(db) << std::endl;
         	return -1;
 	}
@@ -447,11 +449,11 @@ void Window::deploy_logbook() {
 	{ // extract all distinct dates from db
 		sqlite3* db;
 		sqlite3_stmt* stmt;
-		const char* db_name = "./data.db";
+		std::string db_name = output_dir + "/data.db";
 		const char* sql = "SELECT DISTINCT date FROM entries ORDER BY date DESC;"; // Exemple de table
 
 		// Ouvrir la base de données
-		if (sqlite3_open(db_name, &db) != SQLITE_OK) {
+		if (sqlite3_open(db_name.c_str(), &db) != SQLITE_OK) {
 			std::cerr << "Erreur ouverture DB: " << sqlite3_errmsg(db) << std::endl;
 			return;
 		}
@@ -475,7 +477,8 @@ void Window::deploy_logbook() {
 		sqlite3_close(db);
 	}
 	// create a file index.html (the homepage)
-	std::ofstream file("./index.html", std::ios::out);
+	std::string db_name = output_dir + "/data.db";
+	std::ofstream file(std::string(output_dir + "/index.html").c_str(), std::ios::out);
 	if (!file.is_open()) {
 		printf("cannot open index.html\n");
 		return; 
@@ -498,11 +501,11 @@ void Window::deploy_logbook() {
 	{ // start loop over date 
 		sqlite3* db;
 		sqlite3_stmt* stmt;
-		const char* db_name = "./data.db";
+		std::string db_name = output_dir + "/data.db";
 		std::string sql = "SELECT lognumber, date, time, author, title FROM entries WHERE date = ? ORDER BY lognumber DESC;"; // Exemple de table
 
 		// Ouvrir la base de données
-		if (sqlite3_open(db_name, &db) != SQLITE_OK) {
+		if (sqlite3_open(db_name.c_str(), &db) != SQLITE_OK) {
 			std::cerr << "Erreur ouverture DB: " << sqlite3_errmsg(db) << std::endl;
 			return;
 		}
@@ -550,7 +553,7 @@ void Window::deploy_logbook() {
 	file << "</html>" << std::endl;
 	file.close();
 	// create the script file : script_entry.js
-	std::ofstream file2("./script_entry.js", std::ios::out);
+	std::ofstream file2(std::string(output_dir + "/script_entry.js").c_str(), std::ios::out);
 	if (!file2.is_open()) {
 		printf("cannot open script_entry.js\n");
 		return; 
@@ -600,11 +603,11 @@ std::vector<int> Window::get_lognumbers() {
 	// extract all lognumber
 	sqlite3* db;
 	sqlite3_stmt* stmt;
-	const char* db_name = "./data.db";
+	std::string db_name = output_dir + "/data.db";
 	const char* sql = "SELECT lognumber FROM entries ORDER BY lognumber ASC;"; // Exemple de table
 
 	// Ouvrir la base de données
-	if (sqlite3_open(db_name, &db) != SQLITE_OK) {
+	if (sqlite3_open(db_name.c_str(), &db) != SQLITE_OK) {
 		std::cerr << "Erreur ouverture DB: " << sqlite3_errmsg(db) << std::endl;
 		return vec_lognumbers;
 	}
