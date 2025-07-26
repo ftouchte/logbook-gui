@@ -635,6 +635,16 @@ std::vector<int> Window::get_lognumbers() {
 /** Main function */
 int main (int argc, char * argv[]) {
 	printf("Start logbook-gui...\n");
+	if (argc > 1) {
+		if (std::string(argv[1]) == std::string("test")) {
+			if (!std::system("python3 -m http.server 8080 --directory /home/touchte-codjo/.gui-logbook")) { return -1;};
+			return 0;
+		}
+		else if (std::string(argv[1]) == std::string("deploy")) {
+			if (!std::system("here=$(pwd); cd /home/touchte-codjo/.gui-logbook; git add .; git commit -m \"deploy gui-logbook\"; git push; cd $here;")) { return -1;};
+			return 0;
+		}
+	}
 
 	auto app = Gtk::Application::create("org.gtkmm.example.logbook");
 

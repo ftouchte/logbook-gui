@@ -1,4 +1,4 @@
- const lognumbers = [1, 2];
+ const lognumbers = [1, 2, 3];
   
  function Next() { 
  	const text_lognumber = document.getElementById('lognumber').textContent; 
