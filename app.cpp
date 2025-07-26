@@ -143,7 +143,7 @@ Window::Window() :
 				int entry_number = get_last_lognumber() + 1;
 				std::string files_dir = "files/" + time_t2string(now, "%Y/%m/%d") + "/" + std::to_string(entry_number);  
 				std::string filename  = files_dir + "/" + "screenshot_" + time_t2string(now, "%Y-%m-%d_%H-%M-%S") + ".png";
-				std::filesystem::create_directories(files_dir.c_str());
+				std::filesystem::create_directories((output_dir + "/" + files_dir).c_str());
 				std::string command = output_dir + "/screenshot.sh " + output_dir + "/" + filename;
 				if (std::system(command.c_str()) == 0) {
 					// il ne reste plus récupérer le ficher et à l'afficher dans le Notebook. 
