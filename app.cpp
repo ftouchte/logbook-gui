@@ -140,20 +140,22 @@ Window::Window() :
 				printf("screenshot ongoing\n");
 				std::time_t now = std::time(nullptr);
 				// files dir
-				std::string files_dir = output_dir + "/files/" + time_t2string(now, "%Y/%m/%d");  
+				int entry_number = get_last_lognumber() + 1;
+				std::string files_dir = output_dir + "/files/" + time_t2string(now, "%Y/%m/%d") + "/" + std::to_string(entry_number);  
 				std::string filename  = files_dir + "/" + "screenshot_" + time_t2string(now, "%Y-%m-%d_%H-%M-%S") + ".png";
 				std::filesystem::create_directories(files_dir.c_str());
 				std::string command = "./screenshot.sh " + filename;
-				std::system(command.c_str());
-				// il ne reste plus récupérer le ficher et à l'afficher dans le Notebook. 
-				// idée, récupérer le numéro de page actif, insérer une Gtk::Image, etc...
-				// jouer avec les boutons + et -
-				// Gtk::Notebook
-				int page_number = Notebook_screenshots.get_current_page();
-				printf("n pages : %d\n", Notebook_screenshots.get_n_pages());
-				attachments.at(page_number) = filename;
-				update_screenshots();
-				Notebook_screenshots.set_current_page(page_number);
+				if (std::system(command.c_str()) == 0) {
+					// il ne reste plus récupérer le ficher et à l'afficher dans le Notebook. 
+					// idée, récupérer le numéro de page actif, insérer une Gtk::Image, etc...
+					// jouer avec les boutons + et -
+					// Gtk::Notebook
+					int page_number = Notebook_screenshots.get_current_page();
+					printf("n pages : %d\n", Notebook_screenshots.get_n_pages());
+					attachments.at(page_number) = filename;
+					update_screenshots();
+					Notebook_screenshots.set_current_page(page_number);
+				}
 			}
 			flag_screenshot = false;
 		}
@@ -254,6 +256,7 @@ void Window::on_button_minus() {
 void Window::on_button_submit() {
 	printf("Action: submit...\n");
 	std::time_t now = std::time(nullptr);
+	int entry_number = get_last_lognumber() + 1;
 	// css style
 	auto context = Label_log.get_style_context();
 	context->remove_class("label-log1");
@@ -289,26 +292,98 @@ void Window::on_button_submit() {
 	printf("===================================\n");
 	Label_log.set_text("Log entry submitted...");
 	// file output
-	std::string entry_dir  = output_dir + "/entry/" + time_t2string(now, "%Y/%m/%d");  
-	std::string entry_file = entry_dir + "/" + time_t2string(now, "%Y-%m-%d_%H-%M-%S") + ".md";
+	std::string entry_dir  = output_dir + "/entry/" + std::to_string(entry_number);  
+	std::string entry_file = entry_dir + "/" + "index.html";
 	std::filesystem::create_directories(entry_dir.c_str());
 	std::ofstream file(entry_file.c_str(), std::ios::out);
 	if (!file.is_open()) {
         	return; 
     	}
-	file << "## "  << title << std::endl << std::endl;
-	file << "Submitted on " << time_t2string(now, "%a, %d %b %Y - %H:%M:%S %Z") << std::endl << std::endl;
-	file << "   _marker_ :" << marker << std::endl << std::endl;
-	file << "   _email_ :" << email << std::endl << std::endl;
-	file << comments << std::endl << std::endl;
-	file << "**Attachments:**" << std::endl << std::endl;
+	file << "<!DOCTYPE html>" << std::endl;
+	file << "<html>" << std::endl;
+	file << "<head>" << std::endl;
+	file << "  <title>ftouchte | Log Entry</title>" << std::endl;
+	file << "</head>" << std::endl;
+	file << "<meta charset='UTF-8'>" << std::endl;
+	file << "<style>" << std::endl;
+	file << "  img { max-width: 90%; height: auto; margin: auto}" << std::endl;
+	file << "  body {" << std::endl;
+	file << "     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen," << std::endl;
+        file << "       Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;" << std::endl;
+	file << "     margin: 30px;" << std::endl;
+	file << "  }" << std::endl;
+	file << "  #pagination {text-align: center;}" << std::endl;
+	file << "</style>" << std::endl;
+
+	file << "<body>" << std::endl;
+	file << "<div id=pagination>" << std::endl;
+	file << "<button onclick='Prev()'> Prev </button> <button onclick='Next()'> Next </button>" << std::endl;
+	file << "</div>" << std::endl;
+	file << "<h2> "  << title << "</h2>" << std::endl;
+	file << "<p> Lognumber <span id='lognumber' style='color:blue; font-weight: bold;'>"  << entry_number << "</span>. </p>";
+	file << "<p> Submitted on " << time_t2string(now, "%a, %d %b %Y - %H:%M:%S %Z") << "</p>" << std::endl;
+	file << "<p> <i> Marker: </i>" << marker << "</p>" << std::endl;
+	file << "<p> <i> Send to: </i>" << email << "</p>" << std::endl;
+	file << "<p>" << std::endl;
+	file << comments << std::endl;
+	file << "</p>" << std::endl;
+	file << "<p>" << std::endl;
+	file << "   <b> Attachements </b>" << std::endl;
+	file << "</p>" << std::endl;
 	int natt = 0;
 	for (std::string att : attachments) {
 		if (att != "") {
 			natt++;
-			file << natt << ". ![" << att << "](../../../../" << att << ")  " << std::endl;
+			file << "<p> " << natt << ". </p>" << std::endl;
+			file << "<p> <img src='../../"<< att << "' alt='" << att << "'> </p>" << std::endl;
 		}
 	}
+	file << "</body>" << std::endl;
+	// **** Start script
+	file << "<script>" << std::endl;	
+	file << " function Next() {" << std::endl;
+		// generate the list of lognumber
+	file << "   const lognumbers = [";
+	for (int lognumber : get_lognumbers()) {
+		file << lognumber << ", ";
+	}
+	file << "0];" << std::endl;
+		// read the value of the current lognumber in the html page
+	file << "   const text_lognumber = document.getElementById('lognumber').textContent;" << std::endl;
+	file << "   const lognumber = Number(text_lognumber);" << std::endl;
+	file << "   let next_lognumber = lognumbers[0];" << std::endl;
+	file << "   for (let i = 0; i < lognumbers.length - 1; i++) {" << std::endl;
+	file << "       if (lognumbers[i] === lognumber) {" << std::endl;
+	file << "          next_lognumber = lognumbers[i+1];" << std::endl;
+	file << "          break;" << std::endl;
+	file << "       }" << std::endl;
+	file << "   }" << std::endl;
+	file << "   const page = '../' + next_lognumber + '/index.html';" << std::endl;
+	file << "   window.location.href = page;" << std::endl;
+	file << " }" << std::endl;
+	file << " function Prev() {" << std::endl;
+		// generate the list of lognumber
+	file << "   const lognumbers = [";
+	for (int lognumber : get_lognumbers()) {
+		file << lognumber << ", ";
+	}
+	file << "0];" << std::endl;
+		// read the value of the current lognumber in the html page
+	file << "   const text_lognumber = document.getElementById('lognumber').textContent;" << std::endl;
+	file << "   const lognumber = Number(text_lognumber);" << std::endl;
+	file << "   let prev_lognumber = lognumbers[0];" << std::endl;
+	file << "   for (let i = 1; i < lognumbers.length; i++) {" << std::endl;
+	file << "       if (lognumbers[i] === lognumber) {" << std::endl;
+	file << "          prev_lognumber = lognumbers[i-1];" << std::endl;
+	file << "          break;" << std::endl;
+	file << "       }" << std::endl;
+	file << "   }" << std::endl;
+	file << "   const page = '../' + prev_lognumber + '/index.html';" << std::endl;
+	file << "   window.location.href = page;" << std::endl;
+	file << " }" << std::endl;
+	file << "</script>" << std::endl;
+	// **** End script
+	file << "</html>" << std::endl;
 	file.close();
 	
 	// save entry in the database (chatGPT of course!)
@@ -321,7 +396,7 @@ void Window::on_button_submit() {
 		return;
 	}
 		// prepare the command
-	std::string insertSQL = "INSERT INTO entries (timestamp, author, title) VALUES ('" + time_t2string(now, "%Y-%m-%d %H:%M:%S") + "', '" + "touchte" + "', '" + title + "');";
+	std::string insertSQL = "INSERT INTO entries (date, time, author, title) VALUES ('" + time_t2string(now, "%Y-%m-%d") + "', '" + time_t2string(now, "%H:%M:%S") + "', '" + "touchte" + "', '" + title + "');";
 		// execute the command
 	if (sqlite3_exec(db, insertSQL.c_str(), nullptr, nullptr, &errMsg) != SQLITE_OK) {
 		std::cerr << "Erreur insertion: " << errMsg << std::endl;
@@ -330,11 +405,16 @@ void Window::on_button_submit() {
 		std::cout << "New entry added in the database" << std::endl;
 	}
 	sqlite3_close(db);
+	// deploy logbook
+	deploy_logbook();
 }
 
 void Window::on_button_reset() {
 	printf("Action: reset...\n");
-	Entry_title.set_text("Enter a title for log entry...");
+	int entry_number = get_last_lognumber() + 1;
+	char buffer[100];
+	sprintf(buffer, "Entry n° %d: Enter a title for your log entry...", entry_number);
+	Entry_title.set_text(buffer);
 	Entry_email.set_text("");
 	Entry_marker.set_text("");
 	Label_log.set_text("");
@@ -370,6 +450,16 @@ std::string Window::time_t2string(std::time_t t, std::string format) {
 	return oss.str();
 }
 
+time_t Window::string2time_t(std::string date, std::string format) {
+	std::tm tm = {};
+	std::istringstream iss(date);
+	iss >> std::get_time(&tm, format.c_str());
+	if (iss.fail()) {
+		throw std::runtime_error("Invalid format for date");
+	}
+	return std::mktime(&tm);
+}
+
 int Window::get_last_lognumber() {
 	int last_lognumber = -1;
 	// Access last lognumber (chatGPT)
@@ -402,6 +492,163 @@ int Window::get_last_lognumber() {
 	sqlite3_finalize(stmt);
 	sqlite3_close(db);
 	return last_lognumber;
+}
+
+void Window::deploy_logbook() {
+	std::vector<std::string> all_dates;
+	{ // extract all distinct dates from db
+		sqlite3* db;
+		sqlite3_stmt* stmt;
+		const char* db_name = "./data.db";
+		const char* sql = "SELECT DISTINCT date FROM entries ORDER BY date DESC;"; // Exemple de table
+
+		// Ouvrir la base de données
+		if (sqlite3_open(db_name, &db) != SQLITE_OK) {
+			std::cerr << "Erreur ouverture DB: " << sqlite3_errmsg(db) << std::endl;
+			return;
+		}
+
+		// Préparer la requête
+		if (sqlite3_prepare_v2(db, sql, -1, &stmt, nullptr) != SQLITE_OK) {
+			std::cerr << "Erreur préparation requête: " << sqlite3_errmsg(db) << std::endl;
+			sqlite3_close(db);
+			return;
+		}
+		// Lire les lignes
+		printf("All distinct dates : ");
+		while (sqlite3_step(stmt) == SQLITE_ROW) {
+			const unsigned char* date = sqlite3_column_text(stmt, 0);
+			printf("%s, ", date);
+			all_dates.push_back(reinterpret_cast<const char *>(date));
+		}
+		printf("\n");
+		// Libérer les ressources
+		sqlite3_finalize(stmt);
+		sqlite3_close(db);
+	}
+	// create a file (not linked to the sqlite)
+	std::ofstream file("./index.html", std::ios::out);
+	if (!file.is_open()) {
+		printf("cannot open index.html\n");
+		return; 
+	}
+	file << "<!DOCTYPE html>" << std::endl;
+	file << "<html>" << std::endl;
+	file << "<head>" << std::endl;
+	file << "  <title>ftouchte | Log Entry</title>" << std::endl;
+	file << "</head>" << std::endl;
+	file << "<meta charset='UTF-8'>" << std::endl;
+	file << "<style>" << std::endl;
+	file << "  img { max-width: 90%; height: auto; margin: auto}" << std::endl;
+	file << "  body {" << std::endl;
+	file << "     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen," << std::endl;
+	file << "       Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;" << std::endl;
+	file << "     margin: 30px;" << std::endl;
+	file << "  }" << std::endl;
+	file << "  #header {" << std::endl;
+	file << "     background-color: #595959;" << std::endl;  
+	file << "     color: white;" << std::endl;  
+	file << "  }" << std::endl;
+	file << "  table {width: 100; table-layout: default;}" << std::endl;
+	file << "  th {text-align: left}" << std::endl;
+	file << "  th, td {text-align: left; padding-left: 16px; padding-right: 16px;}" << std::endl;
+	file << "</style>" << std::endl;
+		// div : header
+	file << "<body>" << std::endl;
+	file << "<div id=header>" << std::endl;
+	file << "   <h1> Felix Touchte Codjo Electronic - Logbook</h1>" << std::endl;
+	file << "</div>" << std::endl;
+	// div : main
+	file << "<div id=main>" << std::endl;
+	for (std::string this_date : all_dates)
+	{ // start loop over date 
+		sqlite3* db;
+		sqlite3_stmt* stmt;
+		const char* db_name = "./data.db";
+		std::string sql = "SELECT lognumber, date, time, author, title FROM entries WHERE date = ? ORDER BY lognumber DESC;"; // Exemple de table
+
+		// Ouvrir la base de données
+		if (sqlite3_open(db_name, &db) != SQLITE_OK) {
+			std::cerr << "Erreur ouverture DB: " << sqlite3_errmsg(db) << std::endl;
+			return;
+		}
+
+		// Préparer la requête
+		if (sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, nullptr) != SQLITE_OK) {
+			std::cerr << "Erreur préparation requête: " << sqlite3_errmsg(db) << std::endl;
+			sqlite3_close(db);
+			return;
+		}
+		sqlite3_bind_text(stmt, 1, this_date.c_str(), -1, SQLITE_STATIC);
+		// this_date
+		file << "<p> <b>" << time_t2string(string2time_t(this_date, "%Y-%m-%d"), "%A, %d %B %Y") << " </b> </p>" << std::endl;	
+		file << "   <table>" << std::endl;
+		file << "      <tr>" << std::endl;
+		file << "         <th>" << "Lognumber" << "</th>" << std::endl;
+		file << "         <th>" << "Date" << "</th>" << std::endl;
+		file << "         <th>" << "Author" << "</th>" << std::endl;
+		file << "         <th>" << "Title" << "</th>" << std::endl;
+		file << "      </tr>" << std::endl;
+		// Lire les lignes
+		while (sqlite3_step(stmt) == SQLITE_ROW) {
+			int lognumber = sqlite3_column_int(stmt, 0);
+			const unsigned char* date = sqlite3_column_text(stmt, 1);
+			const unsigned char* time = sqlite3_column_text(stmt, 2);
+			const unsigned char* author = sqlite3_column_text(stmt, 3);
+			const unsigned char* title = sqlite3_column_text(stmt, 4);
+			printf("%d | %s | %s | %s | %s\n", lognumber, date, time, author, title);
+			file << "      <tr>" << std::endl;
+			//file << "         <td>" << lognumber << "</td>" << std::endl;
+			file << "         <td>" << "<a href='./entry/" << lognumber << "/index.html'>" << lognumber << "<a>" << "</td>" << std::endl;
+			file << "         <td>" << date << " - " << time << "</td>" << std::endl;
+			file << "         <td>" << author << "</td>" << std::endl;
+			file << "         <td>" << "<a href='./entry/" << lognumber << "/index.html'>" << title << "<a>" << "</td>" << std::endl;
+			file << "      </tr>" << std::endl;
+			
+		}
+		file << "   <table>" << std::endl;
+		// Libérer les ressources
+		sqlite3_finalize(stmt);
+		sqlite3_close(db);
+	} // end loop over date
+	file << "</div>" << std::endl;
+	file << "</body>" << std::endl;
+	file << "</html>" << std::endl;
+	file.close();
+}
+
+std::vector<int> Window::get_lognumbers() {
+	std::vector<int> vec_lognumbers;
+	// extract all lognumber
+	sqlite3* db;
+	sqlite3_stmt* stmt;
+	const char* db_name = "./data.db";
+	const char* sql = "SELECT lognumber FROM entries ORDER BY lognumber DESC;"; // Exemple de table
+
+	// Ouvrir la base de données
+	if (sqlite3_open(db_name, &db) != SQLITE_OK) {
+		std::cerr << "Erreur ouverture DB: " << sqlite3_errmsg(db) << std::endl;
+		return vec_lognumbers;
+	}
+
+	// Préparer la requête
+	if (sqlite3_prepare_v2(db, sql, -1, &stmt, nullptr) != SQLITE_OK) {
+		std::cerr << "Erreur préparation requête: " << sqlite3_errmsg(db) << std::endl;
+		sqlite3_close(db);
+		return vec_lognumbers;
+	}
+	// Lire les lignes
+	printf("All available lognumber : ");
+	while (sqlite3_step(stmt) == SQLITE_ROW) {
+		int lognumber = sqlite3_column_int(stmt, 0);
+		printf("%d, ", lognumber);
+		vec_lognumbers.push_back(lognumber);
+	}
+	printf("\n");
+	// Libérer les ressources
+	sqlite3_finalize(stmt);
+	sqlite3_close(db);
+	return vec_lognumbers;
 }
 
 /** Main function */
