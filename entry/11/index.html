@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset='UTF-8'>
+  <title>ftouchte | Log Entry</title>
+  <link rel='stylesheet' href='../../stylesheet_entry.css'>
+</head>
+<body>
+<div id=header>
+   <h1> <a href='https://ftouchte.github.io/logbook-gui/'> Felix Touchte Codjo - Electronic Logbook </a> </h1>
+</div>
+<div id=pagination>
+<button onclick='Prev()'> Prev </button> <button onclick='Next()'> Next </button>
+</div>
+<h2> Backup : work on the night from Saturday to Sunday (~ fine time correction, study)</h2>
+<p> Lognumber <span id='lognumber'>11</span>. </p><p> Submitted on Sun, 27 Jul 2025 - 04:19:28 CEST</p>
+<p> <i> Marker: </i></p>
+<p> <i> Send to: </i></p>
+<p>
+I'm tired. I worked on the computer since yesterday.
+
+In reusme: 
+
+- I can reduce a hipo by selecting a specified list of event number (code: Filter.java)
+
+- I run the decoding with the script job_recon, max 10000 events
+
+- Used Filter.java to select only 73 events (startTime > 0 and event_number in 172900 and 173000)
+
+- Run the reconstruction using a modified version of config_pass0v3.yaml from the Mathieu's ifarm repo. I call it my-config.yaml 
+
+- I have only changed the path :       schema_dir: "/w/hallb-scshelf2102/clas12/users/touchte/coatjava/coatjava/etc/bankdefs/hipo4/singles/mon/"
+
+- To run the code : 
+
+/w/hallb-scshelf2102/clas12/users/touchte/coatjava/coatjava/bin/recon-util -i reduced_decoded.hipo -o recon.hipo -y my-config.yaml 
+
+- Current issue: type of AHDC::adc:ped (it is no longer a INT, Noemie changed it to a FLOAT). Any reconstruction code to use ped will generate error. <b> to be fixed </b>
+
+
+</p>
+<p>
+   <b> Attachments (2) </b>
+</p>
+<p> 1. </p>
+<p> <img src='../../files/2025/07/27/11/screenshot_2025-07-27_04-18-13.png' alt='files/2025/07/27/11/screenshot_2025-07-27_04-18-13.png'> </p>
+<p> 2. </p>
+<p> <img src='../../files/2025/07/27/11/screenshot_2025-07-27_04-18-35.png' alt='files/2025/07/27/11/screenshot_2025-07-27_04-18-35.png'> </p>
+</body>
+<script src='../../script_entry.js'> </script>
+</html>

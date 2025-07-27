@@ -318,9 +318,9 @@ void Window::on_button_submit() {
 	file << "<p> Submitted on " << time_t2string(now, "%a, %d %b %Y - %H:%M:%S %Z") << "</p>" << std::endl;
 	file << "<p> <i> Marker: </i>" << marker << "</p>" << std::endl;
 	file << "<p> <i> Send to: </i>" << email << "</p>" << std::endl;
-	file << "<p>" << std::endl;
+	file << "<div>" << std::endl;
 	file << comments << std::endl;
-	file << "</p>" << std::endl;
+	file << "</div>" << std::endl;
 	file << "<p>" << std::endl;
 	int natt = 0;
 	for (std::string att : attachments) {
