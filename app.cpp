@@ -107,7 +107,8 @@ Window::Window() :
 
 	// TextBuffer and Entry
 	TextBuffer_comments = Gtk::TextBuffer::create();
-	Frame_comments.set_child(TextView_comments);
+	Frame_comments.set_child(ScrolledWindow_comments);
+	ScrolledWindow_comments.set_child(TextView_comments);
 	TextView_comments.set_buffer(TextBuffer_comments);
 	TextView_comments.set_wrap_mode(Gtk::WrapMode::WORD);
 	Frame_title.set_child(Entry_title);
@@ -531,7 +532,7 @@ void Window::deploy_logbook() {
 		file << "   <table>" << std::endl;
 		file << "      <tr>" << std::endl;
 		file << "         <th>" << "Lognumber" << "</th>" << std::endl;
-		file << "         <th>" << "Date" << "</th>" << std::endl;
+		file << "         <th>" << "Time" << "</th>" << std::endl;
 		file << "         <th>" << "Author" << "</th>" << std::endl;
 		file << "         <th>" << "Title" << "</th>" << std::endl;
 		file << "      </tr>" << std::endl;
@@ -546,7 +547,7 @@ void Window::deploy_logbook() {
 			file << "      <tr>" << std::endl;
 			//file << "         <td>" << lognumber << "</td>" << std::endl;
 			file << "         <td>" << "<a href='./entry/" << lognumber << "/index.html'>" << lognumber << "<a>" << "</td>" << std::endl;
-			file << "         <td>" << date << " - " << time << "</td>" << std::endl;
+			file << "         <td>" << time << "</td>" << std::endl;
 			file << "         <td>" << author << "</td>" << std::endl;
 			file << "         <td>" << "<a href='./entry/" << lognumber << "/index.html'>" << title << "<a>" << "</td>" << std::endl;
 			file << "      </tr>" << std::endl;
