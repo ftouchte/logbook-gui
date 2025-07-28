@@ -306,6 +306,7 @@ void Window::on_button_submit() {
 	file << "  <meta charset='UTF-8'>" << std::endl;
 	file << "  <title>ftouchte | Log Entry</title>" << std::endl;
 	file << "  <link rel='stylesheet' href='../../stylesheet_entry.css'>" << std::endl;
+	file << "  <link rel='icon' type='imaga/x-con' href='../../logo.svg'>" << std::endl;
 	file << "</head>" << std::endl;
 	file << "<body>" << std::endl;
 	file << "<div id=header>" << std::endl;
@@ -499,6 +500,7 @@ void Window::deploy_logbook() {
 	file << "  <meta charset='UTF-8'>" << std::endl;
 	file << "  <title>ftouchte | Logbook</title>" << std::endl;
 	file << "  <link rel='stylesheet' href='./stylesheet_homepage.css'>" << std::endl;
+	file << "  <link rel='icon' type='imaga/x-con' href='./logo.svg'>" << std::endl;
 	file << "</head>" << std::endl;
 		// div : header
 	file << "<body>" << std::endl;
