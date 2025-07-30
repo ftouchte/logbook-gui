@@ -321,7 +321,7 @@ void Window::on_button_submit() {
 	file << "<p> <i> Marker: </i>" << marker << "</p>" << std::endl;
 	file << "<p> <i> Send to: </i>" << email << "</p>" << std::endl;
 	file << "<div>" << std::endl;
-	file << comments << std::endl;
+	file << (std::string) std::regex_replace(comments, std::regex("\n"), "<br>\n") << std::endl;
 	file << "</div>" << std::endl;
 	file << "<p>" << std::endl;
 	int natt = 0;
