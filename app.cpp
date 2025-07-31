@@ -597,7 +597,7 @@ void Window::deploy_logbook() {
 	file2 << " function Prev() { " << std::endl;
 	file2 << " 	const text_lognumber = document.getElementById('lognumber').textContent; " << std::endl;
 	file2 << " 	const lognumber = Number(text_lognumber); " << std::endl;
-	file2 << " 	let prev_lognumber = lognumbers[0]; " << std::endl;
+	file2 << " 	let prev_lognumber = lognumbers[lognumbers.length-1]; " << std::endl;
 	file2 << " 	for (let i = 1; i < lognumbers.length; i++) { " << std::endl;
 	file2 << " 		if (lognumbers[i] === lognumber) { " << std::endl;
 	file2 << " 			prev_lognumber = lognumbers[i-1]; " << std::endl;
