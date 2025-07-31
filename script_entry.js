@@ -1,4 +1,4 @@
- const lognumbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28];
+ const lognumbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29];
   
  function Next() { 
  	const text_lognumber = document.getElementById('lognumber').textContent; 
@@ -17,7 +17,7 @@
  function Prev() { 
  	const text_lognumber = document.getElementById('lognumber').textContent; 
  	const lognumber = Number(text_lognumber); 
- 	let prev_lognumber = lognumbers[0]; 
+ 	let prev_lognumber = lognumbers[lognumbers.length-1]; 
  	for (let i = 1; i < lognumbers.length; i++) { 
  		if (lognumbers[i] === lognumber) { 
  			prev_lognumber = lognumbers[i-1]; 
