@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset='UTF-8'>
+  <title>ftouchte | Log Entry</title>
+  <link rel='stylesheet' href='../../stylesheet_entry.css'>
+  <link rel='icon' type='imaga/x-con' href='../../logo.svg'>
+</head>
+<body>
+<div id=header>
+   <h1> <a href='https://ftouchte.github.io/logbook-gui/'> Felix Touchte Codjo - Electronic Logbook </a> </h1>
+</div>
+<div id=pagination>
+<button onclick='Prev()'> Prev </button> <button onclick='Next()'> Next </button>
+</div>
+<h2> The DC recon failed the AHDC recon</h2>
+<p> Lognumber <span id='lognumber'>33</span>. </p><p> Submitted on Mon, 04 Aug 2025 - 17:22:56 CEST</p>
+<p> <i> Marker: </i>coatjava</p>
+<p> <i> Send to: </i></p>
+<div>
+Because DC is not working, I suspect we don't reconstruct REC::Particle or REC::Event.<br>
+<br>
+That the reason why AHDC::hits is always empty. We require REC::Event !!!<br>
+<br>
+I tested on run 22712.<br>
+<br>
+The <b> dc/v2/tdc_cuts </b> ccdb ranges until run 22708.
+</div>
+<p>
+   <b> Attachments (2) </b>
+</p>
+<p> 1. </p>
+<p> <img src='../../files/2025/08/04/33/screenshot_2025-08-04_17-17-23.png' alt='files/2025/08/04/33/screenshot_2025-08-04_17-17-23.png'> </p>
+<p> 2. </p>
+<p> <img src='../../files/2025/08/04/33/screenshot_2025-08-04_17-20-39.png' alt='files/2025/08/04/33/screenshot_2025-08-04_17-20-39.png'> </p>
+</body>
+<script src='../../script_entry.js'> </script>
+</html>
