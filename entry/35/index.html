@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset='UTF-8'>
+  <title>ftouchte | Log Entry</title>
+  <link rel='stylesheet' href='../../stylesheet_entry.css'>
+  <link rel='icon' type='imaga/x-con' href='../../logo.svg'>
+</head>
+<body>
+<div id=header>
+   <h1> <a href='https://ftouchte.github.io/logbook-gui/'> Felix Touchte Codjo - Electronic Logbook </a> </h1>
+</div>
+<div id=pagination>
+<button onclick='Prev()'> Prev </button> <button onclick='Next()'> Next </button>
+</div>
+<h2> Simulation - current state - waveforms</h2>
+<p> Lognumber <span id='lognumber'>35</span>. </p><p> Submitted on Thu, 07 Aug 2025 - 01:34:56 CEST</p>
+<p> <i> Marker: </i>simulation</p>
+<p> <i> Send to: </i></p>
+<div>
+That works very well. <br>
+<br>
+- we have to use the PuseEctraxtorEngine to generate AHDC::adc from AHDC::wf<br>
+- the simulation generates 30 samples<br>
+- the sampling time and others are used in reconstruction, no need at this point<br>
+- we have a big delay at the beginning<br>
+- update the code, work on samples instead of time ? <br>
+- as we have to load the t0 from ccdb which in ns and not on bins we have to know the sampling time in simulation<br>
+sampling time is now 48 ns instead of 50 ns (cf notes google docs)<br>
+<br>
+<br>
+Description<br>
+--- <br>
+/scigroup/cvmfs/hallb/clas12/sw/noarch/clas12-config/dev/gemc/dev/rgl_spring2025_D2.gcard<br>
+<br>
+BEAM_P="proton,200*MeV,90*deg,0*deg"<br>
+SPREAD_P="90*MeV, 30.0*deg, 180*deg"<br>
+<br>
+
+</div>
+<p>
+   <b> Attachments (3) </b>
+</p>
+<p> 1. </p>
+<p> <img src='../../files/2025/08/07/35/screenshot_2025-08-07_01-33-03.png' alt='files/2025/08/07/35/screenshot_2025-08-07_01-33-03.png'> </p>
+<p> 2. </p>
+<p> <img src='../../files/2025/08/07/35/screenshot_2025-08-07_01-33-12.png' alt='files/2025/08/07/35/screenshot_2025-08-07_01-33-12.png'> </p>
+<p> 3. </p>
+<p> <img src='../../files/2025/08/07/35/screenshot_2025-08-07_01-33-22.png' alt='files/2025/08/07/35/screenshot_2025-08-07_01-33-22.png'> </p>
+</body>
+<script src='../../script_entry.js'> </script>
+</html>
