@@ -316,10 +316,10 @@ void Window::on_button_submit() {
 	file << "<button onclick='Prev()'> Prev </button> <button onclick='Next()'> Next </button>" << std::endl;
 	file << "</div>" << std::endl;
 	file << "<h2> "  << title << "</h2>" << std::endl;
-	file << "<p> Lognumber <span id='lognumber'>"  << entry_number << "</span>. </p>";
+	file << "<p> <b> Lognumber </b> <span id='lognumber'>"  << entry_number << "</span>. </p>";
 	file << "<p> Submitted on " << time_t2string(now, "%a, %d %b %Y - %H:%M:%S %Z") << "</p>" << std::endl;
-	file << "<p> <i> Marker: </i>" << marker << "</p>" << std::endl;
-	file << "<p> <i> Send to: </i>" << email << "</p>" << std::endl;
+	file << "<p> <b> Marker: </b>" << marker << "</p>" << std::endl;
+	file << "<p> <b> Send to: </b>" << email << "</p>" << std::endl;
 	file << "<div>" << std::endl;
 	file << (std::string) std::regex_replace(comments, std::regex("\n"), "<br>\n") << std::endl;
 	file << "</div>" << std::endl;
