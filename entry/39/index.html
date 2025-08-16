@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset='UTF-8'>
+  <title>ftouchte | Log Entry</title>
+  <link rel='stylesheet' href='../../stylesheet_entry.css'>
+  <link rel='icon' type='imaga/x-con' href='../../logo.svg'>
+</head>
+<body>
+<div id=header>
+   <h1> <a href='https://ftouchte.github.io/logbook-gui/'> Felix Touchte Codjo - Electronic Logbook </a> </h1>
+</div>
+<div id=pagination>
+<button onclick='Prev()'> Prev </button> <button onclick='Next()'> Next </button>
+</div>
+<h2> Manage wfType cuts and raw hit cuts</h2>
+<p> Lognumber <span id='lognumber'>39</span>. </p><p> Submitted on Sat, 16 Aug 2025 - 03:00:16 CEST</p>
+<p> <i> Marker: </i>amon</p>
+<p> <i> Send to: </i></p>
+<div>
+Added new features :<br>
+<br>
+1) If "Apply these cuts" is OFF, do no cut (show all hits)<br>
+<br>
+2) Else, if set to ON, take note of all type authorised (e.g wfTypes 0 and 1 are ON); then require the actual wfType is wether 0 or 1<br>
+<br>
+THEN <br>
+<br>
+3) If one of adcMax, adcOffset, leadingEdegeTime, timeOverThreshold, timeMax is negative (non standard values like -9999, -99, ...) ignore this hit<br>
+<br>
+4) Else, if require than apart of being a good wfType, the hit should also satistfy the raw hit cuts.<br>
+<br>
+5) I have made some cleaning and add a "Restart histogram button" --> this is done to do not use the reset button and have to select again the same file.<br>
+<br>
+---<br>
+Meaning of the wfType :<br>
+<br>
+0 is good, <br>
+1 is saturating,<br>
+2 has too short of a baseline,<br>
+3 is late and only has a rising edge,<br>
+4 is a trailing edge from a previous wf,<br>
+5 has low ADC ("flat"),<br>
+6 is invalid<br>
+ 
+</div>
+<p>
+   <b> Attachments (5) </b>
+</p>
+<p> 1. </p>
+<p> <img src='../../files/2025/08/16/39/screenshot_2025-08-16_02-58-07.png' alt='files/2025/08/16/39/screenshot_2025-08-16_02-58-07.png'> </p>
+<p> 2. </p>
+<p> <img src='../../files/2025/08/16/39/screenshot_2025-08-16_02-58-24.png' alt='files/2025/08/16/39/screenshot_2025-08-16_02-58-24.png'> </p>
+<p> 3. </p>
+<p> <img src='../../files/2025/08/16/39/screenshot_2025-08-16_02-58-32.png' alt='files/2025/08/16/39/screenshot_2025-08-16_02-58-32.png'> </p>
+<p> 4. </p>
+<p> <img src='../../files/2025/08/16/39/screenshot_2025-08-16_02-58-41.png' alt='files/2025/08/16/39/screenshot_2025-08-16_02-58-41.png'> </p>
+<p> 5. </p>
+<p> <img src='../../files/2025/08/16/39/screenshot_2025-08-16_02-59-44.png' alt='files/2025/08/16/39/screenshot_2025-08-16_02-59-44.png'> </p>
+</body>
+<script src='../../script_entry.js'> </script>
+</html>
