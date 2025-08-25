@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset='UTF-8'>
+  <title>ftouchte | Log Entry</title>
+  <link rel='stylesheet' href='../../stylesheet_entry.css'>
+  <link rel='icon' type='imaga/x-con' href='../../logo.svg'>
+</head>
+<body>
+<div id=header>
+   <h1> <a href='https://ftouchte.github.io/logbook-gui/'> Felix Touchte Codjo - Electronic Logbook </a> </h1>
+</div>
+<div id=pagination>
+<button onclick='Prev()'> Prev </button> <button onclick='Next()'> Next </button>
+</div>
+<h2> Current state of the reconstruction on simulated data</h2>
+<p> <b> Lognumber </b> <span id='lognumber'>46</span>. </p><p> Submitted on Mon, 25 Aug 2025 - 13:25:44 CEST</p>
+<p> <b> Marker: </b>simulation, reconstruction</p>
+<p> <b> Send to: </b></p>
+<div>
+I run the reconstruction on simulated data. It is obviously bad.<br>
+<br>
+1) In p or pT distribution, it is strange to have nothind below 500 MeV. it is like we have a hidden cut.<br>
+<br>
+2) In theta, it is strange that we reconstruct a lot of thing at 0 and 180 degree. If the track was colinear to the beam axis, we could not have any hits.<br>
+<br>
+3) There are peaks in the phi distribution: we expect it to be equiprobable.<br>
+<br>
+########<br>
+To do<br>
+########<br>
+<br>
+- Verify the position of the hits<br>
+- Verify that the distances are the same in simulation and in reconstrution<br>
+<br>
+PS: I don't use the same binning for the simulation and for the reconstruction, so there is scale effect on these plots.
+</div>
+<p>
+   <b> Attachments (1) </b>
+</p>
+<p> 1. </p>
+<p> <img src='../../files/2025/08/25/46/screenshot_2025-08-25_12-30-16.png' alt='files/2025/08/25/46/screenshot_2025-08-25_12-30-16.png'> </p>
+</body>
+<script src='../../script_entry.js'> </script>
+</html>
